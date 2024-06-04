@@ -20,8 +20,12 @@ export default async function buildAndTagAction(tools: Toolkit) {
   // For example, for version v1.0.0, we'd also update v1.
   let shouldRewriteMajorAndMinorRef = true
 
-  // If this is a prerelease, do not update the major and minor ref.
-  if (semver.prerelease(tagName)) {
+  const prerelease = semver.prerelease(tagName)
+
+  if (prerelease) {
+    await createOrUpdateRef(tools, commit.sha, prerelease[0])
+    
+    // If this is a prerelease, do not update the major and minor ref.
     shouldRewriteMajorAndMinorRef = false
   }
 
