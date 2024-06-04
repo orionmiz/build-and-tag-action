@@ -2,7 +2,6 @@ import { Toolkit } from 'actions-toolkit'
 import semver from 'semver'
 import createOrUpdateRef from './create-or-update-ref'
 import createCommit from './create-commit'
-import updateTag from './update-tag'
 import getTagName from './get-tag-name'
 
 export default async function buildAndTagAction(tools: Toolkit) {
