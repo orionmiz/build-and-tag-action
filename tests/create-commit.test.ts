@@ -2,6 +2,7 @@ import nock from 'nock'
 import createCommit from '../src/lib/create-commit'
 import { generateToolkit } from './helpers'
 import { Toolkit } from 'actions-toolkit'
+import fs from 'fs'
 
 describe('create-commit', () => {
   let tools: Toolkit
@@ -38,7 +39,7 @@ describe('create-commit', () => {
   })
 
   it('creates the tree and commit', async () => {
-    jest.spyOn(tools, 'getPackageJSON').mockReturnValueOnce({})
+    jest.spyOn(fs.promises, 'readFile').mockResolvedValueOnce('{}')
     await expect(() => createCommit(tools)).rejects.toThrow(
       'Property "main" does not exist in your `package.json`.'
     )
