@@ -29,7 +29,7 @@ describe('create-commit', () => {
 
     // Test that our tree was created correctly
     expect(treeParams.tree).toHaveLength(2)
-    expect(treeParams.tree.some((obj: any) => obj.path === 'index.js')).toBe(
+    expect(treeParams.tree.some((obj: any) => obj.path === 'dist/index.js')).toBe(
       true
     )
 
@@ -39,9 +39,9 @@ describe('create-commit', () => {
   })
 
   it('creates the tree and commit', async () => {
-    jest.spyOn(fs.promises, 'readFile').mockResolvedValueOnce('{}')
+    jest.spyOn(fs.promises, 'readFile').mockResolvedValue('{}')
     await expect(() => createCommit(tools)).rejects.toThrow(
-      'Property "main" does not exist in your `package.json`.'
+      'Property "main" does not exist in your `action.yml`.'
     )
   })
 })

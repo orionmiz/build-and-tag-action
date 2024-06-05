@@ -1,14 +1,24 @@
 import { Toolkit } from 'actions-toolkit'
 import readFile from './read-file'
+import jsYaml from 'js-yaml'
 
 export default async function createCommit(tools: Toolkit) {
-  const packageDir = `${tools.inputs.packageDir}/package.json`
-  const packageJson = JSON.parse(await readFile(tools.workspace, packageDir))
+  const { content: yaml, file } = await Promise.any(
+    ['action.yml', 'action.yaml'].map((file) =>
+      readFile(tools.workspace, file).then((content) => ({ content, file }))
+    )
+  )
 
-  const { main } = packageJson
+  const action = jsYaml.safeLoad(yaml) as {
+    runs?: {
+      main?: string
+    }
+  }
+
+  const main = action?.runs?.main
 
   if (!main) {
-    throw new Error('Property "main" does not exist in your `package.json`.')
+    throw new Error(`Property "main" does not exist in your \`${file}\`.`)
   }
 
   tools.log.info('Creating tree')
@@ -16,10 +26,10 @@ export default async function createCommit(tools: Toolkit) {
     ...tools.context.repo,
     tree: [
       {
-        path: 'action.yml',
+        path: file,
         mode: '100644',
         type: 'blob',
-        content: await readFile(tools.workspace, 'action.yml')
+        content: yaml
       },
       {
         path: main,
